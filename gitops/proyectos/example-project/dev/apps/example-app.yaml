@@ -19,6 +19,12 @@ items:
           - /spec/template/spec/containers/0/image
         kind: Deployment
     project: dev-example-project
+    syncPolicy:
+      automated:
+        selfHeal: true
+        prune: true
+      syncOptions:
+        - CreateNamespace=true
     sources:
       # 1. Helm base chart (manifests/helm-base en este mismo repo)
       - helm:
