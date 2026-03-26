@@ -1,0 +1,84 @@
+# -- Example Project: AppProject + ApplicationSet --
+# Equivalente a bup-cross-helm.yaml del original
+apiVersion: v1
+items:
+- apiVersion: argoproj.io/v1alpha1
+  kind: AppProject
+  metadata:
+    finalizers:
+      - resources-finalizer.argocd.argoproj.io
+    name: example-project
+    annotations:
+      argocd.argoproj.io/sync-wave: "1"
+  spec:
+    clusterResourceWhitelist:
+      - group: '*'
+        kind: Namespace
+      - group: argoproj.io
+        kind: Application
+      - group: argoproj.io
+        kind: AppProject
+      - group: argoproj.io
+        kind: ApplicationSet
+      - group: '*'
+        kind: Secret
+      - group: '*'
+        kind: ServiceAccount
+    destinations:
+      - namespace: argocd
+        server: https://kubernetes.default.svc
+      - namespace: dev-example-project
+        server: https://kubernetes.default.svc
+      - namespace: tst-example-project
+        server: https://kubernetes.default.svc
+      - namespace: pre-example-project
+        server: https://kubernetes.default.svc
+      - namespace: prod-example-project
+        server: https://kubernetes.default.svc
+    namespaceResourceBlacklist:
+      - group: ""
+        kind: ResourceQuota
+      - group: ""
+        kind: LimitRange
+      - group: ""
+        kind: NetworkPolicy
+    sourceRepos:
+      - '*'
+- apiVersion: argoproj.io/v1alpha1
+  kind: ApplicationSet
+  metadata:
+    name: example-project-set
+    annotations:
+      argocd.argoproj.io/sync-wave: "1"
+  spec:
+    generators:
+      - list:
+          elements:
+            - env: dev
+              project: example-project
+    template:
+      metadata:
+        finalizers:
+          - resources-finalizer.argocd.argoproj.io
+        name: '{{env}}-{{project}}'
+        namespace: argocd
+      spec:
+        destination:
+          namespace: '{{env}}-{{project}}'
+          server: https://kubernetes.default.svc
+        project: '{{project}}'
+        source:
+          directory:
+            recurse: true
+          path: 'gitops/proyectos/{{project}}/{{env}}'
+          repoURL: https://github.com/NicoMiretti/devops.git
+          targetRevision: main
+        syncPolicy:
+          automated:
+            selfHeal: true
+          syncOptions:
+            - Validate=false
+            - CreateNamespace=true
+            - ApplyOutOfSyncOnly=true
+kind: List
+metadata: {}

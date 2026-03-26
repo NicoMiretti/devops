@@ -1,0 +1,28 @@
+# -- Developer Values para example-app en dev --
+# Este archivo lo gestiona el equipo de desarrollo.
+# En un flujo real, el pipeline de CI/CD lo copia al repo de gitops.
+fullnameOverride: example-app
+
+replicaCount: 1
+
+env:
+  - name: ENVIRONMENT
+    value: dev
+  - name: LOG_LEVEL
+    value: debug
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: "1.27"
+
+service:
+  type: ClusterIP
+  port: 80
+
+envFromProperties:
+  enabled: true
+  data:
+    ENVIRONMENT: dev
+    URL: http://example-app:80/api/
+    LOG_LEVEL: debug

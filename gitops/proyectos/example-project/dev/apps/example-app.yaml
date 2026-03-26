@@ -1,0 +1,42 @@
+# -- Example App: ArgoCD Application (Multi-Source Helm) --
+# Patron: helm-base + values del codigo + override de gitops
+apiVersion: v1
+items:
+- apiVersion: argoproj.io/v1alpha1
+  kind: Application
+  metadata:
+    name: dev-example-app
+    namespace: argocd
+    annotations:
+      argocd.argoproj.io/sync-wave: "1"
+  spec:
+    destination:
+      namespace: dev-example-project
+      server: https://kubernetes.default.svc
+    ignoreDifferences:
+      - group: apps
+        jsonPointers:
+          - /spec/template/spec/containers/0/image
+        kind: Deployment
+    project: dev-example-project
+    sources:
+      # 1. Helm base chart (manifests/helm-base en este mismo repo)
+      - helm:
+          valueFiles:
+            # values del dev (viene del repo de codigo)
+            - $developer-values/codigo/example-app/values-dev.yaml
+            # override de infra (viene del repo gitops)
+            - $gitops-override/gitops/proyectos/example-project/dev/values/example-app-override.yaml
+        path: manifests/helm-base
+        repoURL: https://github.com/NicoMiretti/devops.git
+        targetRevision: main
+      # 2. Referencia al repo de codigo (developer values)
+      - ref: developer-values
+        repoURL: https://github.com/NicoMiretti/devops.git
+        targetRevision: main
+      # 3. Referencia al repo gitops (override values)
+      - ref: gitops-override
+        repoURL: https://github.com/NicoMiretti/devops.git
+        targetRevision: main
+kind: List
+metadata: {}

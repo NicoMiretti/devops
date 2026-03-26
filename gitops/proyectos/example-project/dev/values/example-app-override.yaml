@@ -1,0 +1,15 @@
+# -- Override de infra para example-app en dev --
+# Estos valores los gestiona el equipo de plataforma/infra
+replicaCount: 2
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+envFromProperties:
+  enabled: true
+  data:
+    ENVIRONMENT: dev
+    URL: http://example-app:8080/api/
+    LOG_LEVEL: info

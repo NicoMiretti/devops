@@ -1,0 +1,26 @@
+# -- Repositorios App --
+# Gestiona los secretos de repositorios desde la carpeta repositorios/
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: repositorios
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  source:
+    path: gitops/repositorios
+    repoURL: https://github.com/NicoMiretti/devops.git
+    targetRevision: main
+    directory:
+      recurse: true
+  project: argocd-management
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=false
+      - ApplyOutOfSyncOnly=true

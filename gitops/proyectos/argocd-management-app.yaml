@@ -1,0 +1,31 @@
+# -- ArgoCD Management App --
+# Gestiona los recursos de la carpeta argocd-management (repos, permisos)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-management-app
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  source:
+    path: gitops/proyectos/argocd-management
+    repoURL: https://github.com/NicoMiretti/devops.git
+    targetRevision: main
+    directory:
+      recurse: true
+  project: argocd-management
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=false
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true

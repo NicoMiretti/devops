@@ -1,0 +1,12 @@
+# -- Repositorio: helm-base --
+apiVersion: v1
+kind: Secret
+metadata:
+  name: helm-base-repository
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  name: Helm Base
+  url: https://github.com/NicoMiretti/devops.git
+  type: git

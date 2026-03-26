@@ -1,0 +1,28 @@
+# -- GitOps Core: App of Apps (Root Application) --
+# Esta Application es la raiz del patron App of Apps.
+# Escanea la carpeta 'proyectos/' y crea todas las apps/appsets que encuentre.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: applications
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  source:
+    path: gitops/proyectos
+    repoURL: https://github.com/NicoMiretti/devops.git
+    targetRevision: main
+  project: argocd-management
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: false
+      allowEmpty: true
+    syncOptions:
+      - Validate=false
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true

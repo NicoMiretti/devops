@@ -1,0 +1,10 @@
+{{- if .Values.envFromProperties.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.envFromProperties.configMapName | default (include "app-component.fullname" .) }}
+  labels:
+    {{- include "app-component.labels" . | nindent 4 }}
+data:
+  {{- toYaml .Values.envFromProperties.data | nindent 2 }}
+{{- end }}

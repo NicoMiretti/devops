@@ -1,0 +1,36 @@
+# -- Dev Project: Namespace + AppProject --
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Namespace
+  metadata:
+    name: dev-example-project
+- apiVersion: argoproj.io/v1alpha1
+  kind: AppProject
+  metadata:
+    finalizers:
+      - resources-finalizer.argocd.argoproj.io
+    name: dev-example-project
+    namespace: argocd
+  spec:
+    clusterResourceWhitelist:
+      - group: '*'
+        kind: Namespace
+      - group: '*'
+        kind: Secret
+      - group: '*'
+        kind: ServiceAccount
+    destinations:
+      - namespace: dev-example-project
+        server: https://kubernetes.default.svc
+    namespaceResourceBlacklist:
+      - group: ""
+        kind: ResourceQuota
+      - group: ""
+        kind: LimitRange
+      - group: ""
+        kind: NetworkPolicy
+    sourceRepos:
+      - '*'
+kind: List
+metadata: {}
