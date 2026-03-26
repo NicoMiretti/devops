@@ -70,6 +70,7 @@ items:
         source:
           directory:
             recurse: true
+            exclude: '{values/*,values/**}'
           path: 'gitops/proyectos/{{project}}/{{env}}'
           repoURL: https://github.com/NicoMiretti/devops.git
           targetRevision: main

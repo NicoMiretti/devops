@@ -5,6 +5,8 @@ items:
   kind: Namespace
   metadata:
     name: dev-example-project
+    annotations:
+      argocd.argoproj.io/sync-wave: "-1"
 - apiVersion: argoproj.io/v1alpha1
   kind: AppProject
   metadata:
@@ -12,6 +14,8 @@ items:
       - resources-finalizer.argocd.argoproj.io
     name: dev-example-project
     namespace: argocd
+    annotations:
+      argocd.argoproj.io/sync-wave: "-1"
   spec:
     clusterResourceWhitelist:
       - group: '*'
